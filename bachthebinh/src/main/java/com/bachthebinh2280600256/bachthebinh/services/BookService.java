@@ -4,43 +4,52 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bachthebinh2280600256.bachthebinh.entities.Book;
+import com.bachthebinh2280600256.bachthebinh.repositories.IBookRepository;
 
 import lombok.RequiredArgsConstructor;
 
+
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BookService {
 
-    private final List<Book> books;
+    private final IBookRepository bookRepository;
 
-    public List<Book> getAllBooks() {
-        return books;
+    public List<Book> getAllBooks(Integer pageNo,
+                                  Integer pageSize,
+                                  String sortBy) {
+        return bookRepository.findAllBooks(pageNo, pageSize, sortBy);
     }
 
     public Optional<Book> getBookById(Long id) {
-        return books.stream()
-                .filter(book -> book.getId().equals(id))
-                .findFirst();
+        return bookRepository.findById(id);
     }
 
     public void addBook(Book book) {
-        books.add(book);
+        bookRepository.save(book);
     }
 
     public void updateBook(Book book) {
-        var bookOptional = getBookById(book.getId());
-        if (bookOptional.isPresent()) {
-            Book bookUpdate = bookOptional.get();
-            bookUpdate.setTitle(book.getTitle());
-            bookUpdate.setAuthor(book.getAuthor());
-            bookUpdate.setPrice(book.getPrice());
-            bookUpdate.setCategory(book.getCategory());
-        }
+        Book existingBook = bookRepository.findById(book.getId())
+                .orElseThrow(() -> new RuntimeException("Book not found"));
+
+        existingBook.setTitle(book.getTitle());
+        existingBook.setAuthor(book.getAuthor());
+        existingBook.setPrice(book.getPrice());
+        existingBook.setCategory(book.getCategory());
+
+        bookRepository.save(existingBook);
     }
 
     public void deleteBookById(Long id) {
-        getBookById(id).ifPresent(books::remove);
+        bookRepository.deleteById(id);
+    }
+    // --- THÊM MỚI: Tìm kiếm sách theo Tiêu đề hoặc Tác giả ---
+    public List<Book> searchBooks(String keyword) {
+        return bookRepository.searchBook(keyword);
     }
 }
