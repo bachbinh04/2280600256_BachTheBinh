@@ -1,6 +1,9 @@
 package com.bachthebinh2280600256.bachthebinh.controllers;
 
+import java.security.Principal;
+import java.util.Optional; // <--- Thêm dòng này
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -52,9 +55,48 @@ public class UserController {
     
     // 1. Hiển thị form profile
     @GetMapping("/profile")
-    public String viewProfile(Model model, java.security.Principal principal) {
-        String username = principal.getName(); // Lấy tên user đang đăng nhập
-        User user = userService.findByUsername(username).orElseThrow();
+    public String viewProfile(Model model, Principal principal) {
+        String username = principal.getName();
+        String fullName = "New User";
+        
+        // Cờ đánh dấu: Có phải login bằng Google không?
+        boolean isOauthLogin = false; 
+
+        if (principal instanceof OAuth2AuthenticationToken) {
+            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) principal;
+            String email = oauthToken.getPrincipal().getAttribute("email");
+            String name = oauthToken.getPrincipal().getAttribute("name");
+            
+            if (email != null) {
+                username = email;
+                isOauthLogin = true; // Đánh dấu là login Google
+            }
+            if (name != null) fullName = name;
+        }
+
+        String finalUsername = username;
+        String finalName = fullName;
+        boolean finalIsOauthLogin = isOauthLogin;
+
+        // LOGIC MỚI:
+        // 1. Tìm user trong DB
+        Optional<User> existingUser;
+        if (finalIsOauthLogin) {
+            // Nếu là Google login, ưu tiên tìm bằng Email
+            existingUser = userService.findByEmail(finalUsername); 
+        } else {
+            existingUser = userService.findByUsername(finalUsername);
+        }
+
+        // 2. Nếu không thấy và là Google login -> Tạo mới ngay lập tức
+        User user = existingUser.orElseGet(() -> {
+            if (finalIsOauthLogin) {
+                userService.saveOauthUser(finalUsername, finalName);
+                return userService.findByEmail(finalUsername).orElse(new User());
+            }
+            return new User();
+        });
+        
         model.addAttribute("user", user);
         return "user/profile";
     }

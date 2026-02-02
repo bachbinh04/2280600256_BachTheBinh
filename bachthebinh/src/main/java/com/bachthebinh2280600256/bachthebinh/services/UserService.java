@@ -107,4 +107,25 @@ public class UserService implements UserDetailsService {
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
+    // Thêm hàm xử lý lưu User từ Google
+    public void saveOauthUser(String email, String name) {
+        // SỬA: Kiểm tra theo Email thay vì Username
+        if (userRepository.findByEmail(email).isPresent()) {
+            return; // Nếu email đã có thì thôi, không tạo nữa
+        }
+        
+        var user = new User();
+        user.setUsername(email);
+        user.setEmail(email);
+        user.setName(name);
+        user.setPassword(new BCryptPasswordEncoder().encode("123456"));
+        user.setPhone("1234567890"); // Fix lỗi phone null
+        
+        userRepository.save(user);
+        setDefaultRole(user.getUsername());
+    }
+    // Thêm hàm này vào trong class UserService
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 }
