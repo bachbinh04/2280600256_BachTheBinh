@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(content=~{::section}, title='Manage Users')}">
+<head>
+    <title>Manage Users</title>
+</head>
+<body>
+    <section>
+        <h2 class="mb-4 text-center">User Management</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Current Role</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.id}"></td>
+                        <td th:text="${user.username}"></td>
+                        <td th:text="${user.email}"></td>
+                        <td th:text="${user.phone}"></td>
+                        <td>
+                            <span th:each="role : ${user.roles}" 
+                                  th:text="${role.name}" 
+                                  class="badge bg-info text-dark me-1"></span>
+                        </td>
+                        <td>
+                            <a th:href="@{/admin/users/edit/{id}(id=${user.id})}" 
+                               class="btn btn-primary btn-sm">
+                               Change Role
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</body>
+</html>

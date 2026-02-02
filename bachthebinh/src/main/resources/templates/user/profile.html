@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(content=~{::section}, title='My Profile')}">
+<body>
+    <section>
+        <h2 class="text-center">My Profile</h2>
+        
+        <div th:if="${param.success}" class="alert alert-success">Profile updated successfully!</div>
+
+        <form th:action="@{/profile}" th:object="${user}" method="post" class="col-md-6 mx-auto">
+            <input type="hidden" th:field="*{id}">
+            
+            <div class="mb-3">
+                <label class="form-label">Username (Cannot change)</label>
+                <input type="text" class="form-control" th:field="*{username}" readonly>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" th:field="*{email}" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Phone</label>
+                <input type="text" class="form-control" th:field="*{phone}" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Update Profile</button>
+        </form>
+    </section>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(content=~{::section}, title='Edit User Role')}">
+<head>
+    <title>Edit User Role</title>
+</head>
+<body>
+    <section>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Edit Role for: <span th:text="${user.username}"></span></h4>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/admin/users/edit}" method="post">
+                            <input type="hidden" name="userId" th:value="${user.id}">
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Select Role:</label>
+                                <select name="roleId" class="form-select">
+                                    <option th:each="role : ${allRoles}" 
+                                            th:value="${role.id}" 
+                                            th:text="${role.name}"
+                                            th:selected="${user.roles.contains(role)}">
+                                    </option>
+                                </select>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success">Save Changes</button>
+                                <a th:href="@{/admin/users}" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

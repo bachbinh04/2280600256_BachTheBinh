@@ -12,4 +12,8 @@ public class HomeController {
     public String home() {
         return "home/index";
     }
+    @GetMapping("/403")
+    public String accessDenied() {
+        return "error/403"; // Trả về file templates/error/403.html
+    }
 }

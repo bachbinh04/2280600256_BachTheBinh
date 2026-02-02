@@ -1,77 +1,76 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
-
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(content=~{::section}, title='Shopping Cart')}">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Cart</title>
-    <th:block th:replace="~{layout::link-css}"></th:block>
-    <th:block th:replace="~{layout::custom-css}"></th:block>
+    <title>Shopping Cart</title>
 </head>
-
 <body>
-<th:block th:replace="~{layout::header}"></th:block>
+    <section>
+        <div class="container mt-4">
+            <h2 class="mb-4 text-center">Your Shopping Cart</h2>
 
-<div class="container" th:if="${not #lists.isEmpty(cart.cartItems)}">
-    <table class="table">
-        <thead>
-        <tr>
-            <th scope="col">Book ID</th>
-            <th scope="col">Book Name</th>
-            <th scope="col">Quantity</th>
-            <th scope="col">Price</th>
-            <th scope="col">Total</th>
-            <th scope="col">Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="item : ${cart.cartItems}">
-            <td th:text="${item.bookId}"></td>
-            <td th:text="${item.title}"></td> <!-- ✅ FIX -->
-            <td>
-                <input type="number"
-                       min="1"
-                       class="form-control quantity"
-                       th:value="${item.quantity}"
-                       th:attr="data-id=${item.bookId}">
-            </td>
-            <td th:text="${item.price}"></td>
-            <td th:text="${item.price * item.quantity}"></td>
-            <td>
-                <a class="btn btn-danger"
-                   th:href="@{/cart/removeFromCart/{id}(id=${item.bookId})}">
-                    Remove
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+            <div th:if="${not #lists.isEmpty(cart.cartItems)}">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Book Name</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${cart.cartItems}">
+                            <td th:text="${item.bookId}"></td>
+                            <td th:text="${item.title}"></td>
+                            <td style="width: 150px;">
+                                <input type="number" min="1" class="form-control quantity"
+                                       th:value="${item.quantity}"
+                                       th:attr="data-id=${item.bookId}">
+                            </td>
+                            <td th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
+                            
+                            <td th:id="'item-total-' + ${item.bookId}" 
+                                th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">
+                            </td>
+                            
+                            <td>
+                                <a class="btn btn-danger btn-sm"
+                                   th:href="@{/cart/removeFromCart/{id}(id=${item.bookId})}"
+                                   onclick="return confirm('Remove this item?')">
+                                    Remove
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <h3>Total: <span th:text="${totalPrice}"></span></h3>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <h4>Total: <span id="order-total" class="text-danger" 
+                                         th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+                        </h4>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <a class="btn btn-danger me-2" th:href="@{/cart/clearCart}" 
+                           onclick="return confirm('Are you sure you want to clear cart?')">Clear Cart</a>
+                        <a class="btn btn-success" th:href="@{/cart/checkout}">Checkout</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-5" th:if="${#lists.isEmpty(cart.cartItems)}">
+                <h3 class="text-muted">Your cart is empty!</h3>
+                <p>Add some books to continue.</p>
+                <a class="btn btn-primary" th:href="@{/books}">Go to Book List</a>
+            </div>
+            
+            <script th:src="@{/js/cart.js}"></script>
         </div>
-        <div class="col-md-12 text-center">
-            <a class="btn btn-success" th:href="@{/cart/checkout}">Checkout</a>
-            <a class="btn btn-danger" th:href="@{/cart/clearCart}">Clear Cart</a>
-        </div>
-    </div>
-</div>
-
-<div class="container" th:if="${#lists.isEmpty(cart.cartItems)}">
-    <div class="row">
-        <div class="col-md-6 offset-md-3 text-center">
-            <h3 class="mt-5">Your cart is empty</h3>
-            <p class="lead">Please add some books to your cart</p>
-            <a class="btn btn-primary" th:href="@{/books}">Go to list book</a>
-        </div>
-    </div>
-</div>
-
-<th:block th:replace="~{layout::footer}"></th:block>
-<script th:src="@{/js/cart.js}"></script>
+    </section>
 </body>
-
 </html>
