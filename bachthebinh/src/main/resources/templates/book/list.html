@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      th:replace="~{layout :: layout(content=~{::section}, title='Book Store')}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+    th:replace="~{layout :: layout(content=~{::section}, title='Book Store')}">
+
 <head>
     <title>Book Store</title>
 </head>
+
 <body>
     <section>
         <div class="container py-4">
             <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-white rounded shadow-sm">
                 <h2 class="mb-0 fw-bold text-primary"><i class="fas fa-book me-2"></i>Explore Books</h2>
-                
+
                 <div class="d-flex">
                     <div sec:authorize="hasAuthority('ADMIN')" class="me-3">
                         <a class="btn btn-primary" th:href="@{/books/add}">
@@ -19,8 +20,8 @@
                     </div>
                     <form class="d-flex" th:action="@{/books}" method="get">
                         <div class="input-group">
-                            <input class="form-control" type="search" placeholder="Search books..." 
-                                name="keyword" th:value="${keyword}" style="border-radius: 20px 0 0 20px; border-right: none;">
+                            <input class="form-control" type="search" placeholder="Search books..." name="keyword"
+                                th:value="${keyword}" style="border-radius: 20px 0 0 20px; border-right: none;">
                             <button class="btn btn-outline-primary" type="submit" style="border-radius: 0 20px 20px 0;">
                                 <i class="fas fa-search"></i>
                             </button>
@@ -28,38 +29,54 @@
                     </form>
                 </div>
             </div>
-            
+
             <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
                 <div class="col" th:each="book : ${books}">
                     <div class="book-card">
-                        <div class="text-center mb-3 text-secondary py-3 bg-light rounded">
-                            <i class="fas fa-book-open fa-4x" style="color: #a29bfe;"></i>
+
+                        <div class="text-center mb-3 text-secondary bg-light rounded d-flex align-items-center justify-content-center"
+                            style="height: 220px; overflow: hidden;">
+
+                            <img th:if="${book.image != null and book.image != ''}"
+                                th:src="@{'/images/' + ${book.image}}" class="img-fluid"
+                                style="max-height: 100%; width: auto; object-fit: cover;" alt="Book Cover">
+
+                            <i th:if="${book.image == null or book.image == ''}" class="fas fa-book-open fa-4x"
+                                style="color: #a29bfe;"></i>
                         </div>
-                        
+
                         <div class="flex-grow-1">
-                            <h5 class="book-title text-truncate" th:text="${book.title}" th:title="${book.title}">Title</h5>
-                            <p class="text-muted mb-1 small"><i class="fas fa-user-edit me-1"></i><span th:text="${book.author}"></span></p>
-                            <span class="badge bg-info text-white mb-2" th:text="${book.category != null ? book.category.name : 'Uncategorized'}"></span>
+                            <h5 class="book-title text-truncate" th:text="${book.title}" th:title="${book.title}">Title
+                            </h5>
+                            <p class="text-muted mb-1 small"><i class="fas fa-user-edit me-1"></i><span
+                                    th:text="${book.author}"></span></p>
+                            <span class="badge bg-info text-white mb-2"
+                                th:text="${book.category != null ? book.category.name : 'Uncategorized'}"></span>
                         </div>
-                        
+
                         <div class="mt-3 d-flex justify-content-between align-items-center pt-3 border-top">
-                            <span class="book-price" th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
-                            
+                            <span class="book-price"
+                                th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+
                             <form sec:authorize="isAuthenticated()" th:action="@{/books/add-to-cart}" method="post">
                                 <input type="hidden" name="id" th:value="${book.id}">
                                 <input type="hidden" name="name" th:value="${book.title}">
                                 <input type="hidden" name="price" th:value="${book.price}">
-                                <button type="submit" class="btn btn-sm btn-outline-primary rounded-circle" 
-                                        style="width: 40px; height: 40px;" title="Add to Cart">
+
+                                <input type="hidden" name="image" th:value="${book.image}">
+
+                                <button type="submit" class="btn btn-sm btn-outline-primary rounded-circle"
+                                    style="width: 40px; height: 40px;" title="Add to Cart">
                                     <i class="fas fa-cart-plus"></i>
                                 </button>
                             </form>
                         </div>
 
                         <div sec:authorize="hasAuthority('ADMIN')" class="mt-2 text-end">
-                            <a th:href="@{/books/edit/{id}(id=${book.id})}" class="text-warning me-2"><i class="fas fa-edit"></i></a>
-                            <a th:href="@{/books/delete/{id}(id=${book.id})}" class="text-danger" 
-                               onclick="return confirm('Delete this book?')"><i class="fas fa-trash"></i></a>
+                            <a th:href="@{/books/edit/{id}(id=${book.id})}" class="text-warning me-2"><i
+                                    class="fas fa-edit"></i></a>
+                            <a th:href="@{/books/delete/{id}(id=${book.id})}" class="text-danger"
+                                onclick="return confirm('Delete this book?')"><i class="fas fa-trash"></i></a>
                         </div>
                     </div>
                 </div>
@@ -74,14 +91,14 @@
                 <ul class="pagination justify-content-center">
                     <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages > 0 ? totalPages - 1 : 0)}"
                         th:classappend="${currentPage == i} ? 'active'">
-                        <a class="page-link rounded-circle mx-1 border-0 shadow-sm" 
-                           th:href="@{/books(pageNo=${i}, keyword=${keyword})}" 
-                           th:text="${i + 1}"
-                           style="width: 40px; height: 40px; text-align: center; line-height: 25px; color: var(--primary-color);"></a>
+                        <a class="page-link rounded-circle mx-1 border-0 shadow-sm"
+                            th:href="@{/books(pageNo=${i}, keyword=${keyword})}" th:text="${i + 1}"
+                            style="width: 40px; height: 40px; text-align: center; line-height: 25px; color: var(--primary-color);"></a>
                     </li>
                 </ul>
             </nav>
         </div>
     </section>
 </body>
+
 </html>

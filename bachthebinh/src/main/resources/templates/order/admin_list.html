@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(content=~{::section}, title='Quản lý đơn hàng')}">
+<body>
+<section>
+    <div class="container py-4">
+        <h2 class="mb-4 text-primary"><i class="fas fa-user-shield"></i> Quản lý đơn hàng (Admin)</h2>
+        
+        <table class="table table-bordered table-striped">
+            <thead class="bg-primary text-white">
+            <tr>
+                <th>ID</th>
+                <th>Khách hàng</th> <th>Ngày đặt</th>
+                <th>Tổng tiền</th>
+                <th>Thanh toán</th>
+                <th>Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${orders}">
+                <td th:text="${order.id}"></td>
+                <td>
+                    <strong th:text="${order.user.username}"></strong><br>
+                    <small th:text="${order.user.email}"></small>
+                </td>
+                <td th:text="${#dates.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></td>
+                <td th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+                <td th:text="${order.paymentMethod}"></td>
+                <td>
+                    <a th:href="@{/order/detail/{id}(id=${order.id})}" class="btn btn-sm btn-info text-white">
+                        Chi tiết
+                    </a>
+                    </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</body>
+</html>

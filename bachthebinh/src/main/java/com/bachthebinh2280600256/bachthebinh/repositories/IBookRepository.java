@@ -31,4 +31,5 @@ public interface IBookRepository extends
         OR b.category.name LIKE %?1%
     """)
     List<Book> searchBook(String keyword);
+   
 }

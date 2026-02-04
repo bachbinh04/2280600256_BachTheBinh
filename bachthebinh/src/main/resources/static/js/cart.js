@@ -1,34 +1,47 @@
-$(document).ready(function () {
-    // Sự kiện thay đổi số lượng
-    $('.quantity').change(function () {
-        let quantity = $(this).val();
-        let id = $(this).attr('data-id');
-        
-        // Kiểm tra số lượng hợp lệ
-        if (quantity < 1) {
-            alert("Số lượng tối thiểu là 1");
-            quantity = 1;
-            $(this).val(1);
-        }
+// Hàm cập nhật giỏ hàng
+function updateCart(inputElement) {
+    // 1. Lấy ID sách và Số lượng từ thẻ input
+    let bookId = inputElement.getAttribute('data-id');
+    let quantity = inputElement.value;
 
-        $.ajax({
-            url: '/cart/updateCart/' + id + '/' + quantity,
-            type: 'GET',
-            dataType: 'json', // Báo cho JS biết server trả về JSON
-            success: function (data) {
-                // Định dạng tiền tệ (Ví dụ: 1000 -> 1.000 VNĐ)
-                // Lưu ý: Dấu chấm/phẩy tùy thuộc vào Locale trình duyệt, bạn có thể chỉnh cứng nếu muốn
-                let formatPrice = (num) => num.toLocaleString('en-US').replace(/,/g, '.') + ' VNĐ'; 
-                
-                // 1. Cập nhật thành tiền của dòng đó
-                $('#item-total-' + id).text(formatPrice(data.itemTotal));
-                
-                // 2. Cập nhật tổng tiền cả giỏ hàng
-                $('#order-total').text(formatPrice(data.totalPrice));
-            },
-            error: function (xhr) {
-                console.log('Lỗi cập nhật giỏ hàng');
+    // Kiểm tra số lượng hợp lệ
+    if (quantity < 1) {
+        alert("Số lượng phải lớn hơn 0");
+        inputElement.value = 1;
+        quantity = 1;
+    }
+
+    // 2. Gọi API cập nhật (AJAX Fetch)
+    fetch(`/cart/updateCart/${bookId}/${quantity}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
+            return response.json(); // Chuyển kết quả về JSON
+        })
+        .then(data => {
+            // 3. Cập nhật giao diện với dữ liệu mới nhận được
+            
+            // Format tiền tệ (VNĐ)
+            let itemTotalFormatted = formatCurrency(data.itemTotal);
+            let totalPriceFormatted = formatCurrency(data.totalPrice) + ' VNĐ';
+
+            // Cập nhật thành tiền của món hàng đó
+            let itemTotalElement = document.getElementById(`item-total-${bookId}`);
+            if (itemTotalElement) {
+                itemTotalElement.innerText = itemTotalFormatted;
+            }
+
+            // Cập nhật tổng tiền đơn hàng
+            document.getElementById('order-total').innerText = totalPriceFormatted;
+            document.getElementById('final-total').innerText = totalPriceFormatted;
+        })
+        .catch(error => {
+            console.error('Error updating cart:', error);
         });
-    });
-});
+}
+
+// Hàm format tiền tệ kiểu Việt Nam (VD: 100,000)
+function formatCurrency(number) {
+    return new Intl.NumberFormat('vi-VN').format(number);
+}

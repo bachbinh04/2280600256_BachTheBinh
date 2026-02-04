@@ -14,7 +14,10 @@ import jakarta.validation.constraints.NotNull;
 public class CartService {
 
     private static final String CART_SESSION_KEY = "cart";
-
+    public void clearCart(HttpSession session) {
+        // Xóa hoàn toàn attribute "cart" khỏi phiên làm việc
+        session.removeAttribute("cart");
+    }
     public Cart getCart(@NotNull HttpSession session) {
         return Optional.ofNullable((Cart) session.getAttribute(CART_SESSION_KEY))
                 .orElseGet(() -> {

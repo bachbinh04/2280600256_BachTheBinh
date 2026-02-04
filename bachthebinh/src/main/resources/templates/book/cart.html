@@ -33,12 +33,12 @@
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="bg-light rounded p-2 me-3 text-secondary">
-                                                    <i class="fas fa-book fa-2x"></i>
+                                                    <img th:if="${item.image != null}" th:src="@{'/images/' + ${item.image}}" style="width: 50px;">
+                                                    <i th:if="${item.image == null}" class="fas fa-book fa-2x"></i>
                                                 </div>
                                                 <div>
                                                     <h6 class="mb-0 fw-bold" th:text="${item.title}">Book Name</h6>
-                                                    <small class="text-muted">ID: <span
-                                                            th:text="${item.bookId}"></span></small>
+                                                    <small class="text-muted">ID: <span th:text="${item.bookId}"></span></small>
                                                 </div>
                                             </div>
                                         </td>
@@ -47,10 +47,13 @@
                                         </td>
                                         <td>
                                             <input type="number" min="1" class="form-control quantity text-center"
-                                                style="width: 70px; border-radius: 10px;" th:value="${item.quantity}"
-                                                th:attr="data-id=${item.bookId}">
+                                                style="width: 70px; border-radius: 10px;" 
+                                                th:value="${item.quantity}"
+                                                th:attr="data-id=${item.bookId}"
+                                                onchange="updateCart(this)">
                                         </td>
-                                        <td class="fw-bold text-primary" th:id="'item-total-' + ${item.bookId}"
+                                        <td class="fw-bold text-primary" 
+                                            th:id="'item-total-' + ${item.bookId}"
                                             th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 0, 'POINT')}">
                                         </td>
                                         <td>
@@ -125,5 +128,4 @@
         </div>
     </section>
 </body>
-
 </html>

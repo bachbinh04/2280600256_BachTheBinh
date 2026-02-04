@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(content=~{::section}, title='Chi tiết đơn hàng')}">
+<body>
+<section>
+    <div class="container py-4">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-white border-bottom py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Chi tiết đơn hàng #<span th:text="${order.id}"></span></h4>
+                    <span class="badge bg-success" th:text="${order.status}"></span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <p><strong>Ngày đặt:</strong> <span th:text="${#dates.format(order.orderDate, 'dd-MM-yyyy HH:mm')}"></span></p>
+                        <p><strong>Người nhận:</strong> <span th:text="${order.user.username}"></span></p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <p><strong>Phương thức:</strong> <span th:text="${order.paymentMethod}"></span></p>
+                    </div>
+                </div>
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Sách</th>
+                        <th>Giá</th>
+                        <th>Số lượng</th>
+                        <th class="text-end">Thành tiền</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="detail : ${order.orderDetails}">
+                        <td th:text="${detail.book.title}">Tên sách</td>
+                        <td th:text="${#numbers.formatDecimal(detail.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+                        <td th:text="${detail.quantity}"></td>
+                        <td class="text-end" th:text="${#numbers.formatDecimal(detail.price * detail.quantity, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+                    </tr>
+                    </tbody>
+                    <tfoot class="table-light">
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">Tổng cộng:</td>
+                        <td class="text-end fw-bold text-danger fs-5" 
+                            th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="card-footer text-center py-3 bg-white">
+                <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-pill px-4">Quay lại</a>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html> 

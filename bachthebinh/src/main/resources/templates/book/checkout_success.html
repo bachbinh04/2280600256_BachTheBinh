@@ -1,22 +1,51 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layout :: layout(content=~{::section}, title='Order Success')}">
+      th:replace="~{layout :: layout(content=~{::section}, title='Kết quả thanh toán')}">
 <head>
-    <title>Order Success</title>
+    <title>Kết quả thanh toán</title>
 </head>
 <body>
     <section>
-        <div class="container text-center mt-5">
-            <div class="alert alert-success" role="alert">
-                <h1 class="display-4">Thank You!</h1>
-                <p class="lead">Your order has been placed successfully.</p>
-                <hr>
-                <p>You can continue browsing other books.</p>
+        <div class="container py-5 text-center">
+            
+            <div th:if="${paymentStatus == 'SUCCESS'}" class="card shadow border-0 rounded-4 p-5 mx-auto" style="max-width: 600px;">
+                <div class="mb-4 text-success">
+                    <i class="fas fa-check-circle fa-5x"></i>
+                </div>
+                <h2 class="fw-bold text-success mb-3">Thanh toán thành công!</h2>
+                <p class="text-muted mb-4" th:text="${message}">Giao dịch đã được ghi nhận.</p>
                 
-                <a class="btn btn-primary btn-lg" th:href="@{/books}" role="button">
-                    Continue Shopping
-                </a>
+                <div class="d-grid gap-2 col-8 mx-auto">
+                    <a th:href="@{/books}" class="btn btn-primary rounded-pill py-2">
+                        <i class="fas fa-book me-2"></i>Tiếp tục mua sắm
+                    </a>
+                    <a th:href="@{/profile}" class="btn btn-outline-secondary rounded-pill py-2">
+                        Xem lịch sử đơn hàng
+                    </a>
+                </div>
             </div>
+
+            <div th:if="${paymentStatus == 'FAILED'}" class="card shadow border-0 rounded-4 p-5 mx-auto" style="max-width: 600px;">
+                <div class="mb-4 text-danger">
+                    <i class="fas fa-times-circle fa-5x"></i>
+                </div>
+                <h2 class="fw-bold text-danger mb-3">Thanh toán thất bại</h2>
+                <p class="text-muted mb-4" th:text="${message}">Có lỗi xảy ra trong quá trình xử lý.</p>
+                
+                <div class="alert alert-warning border-0 bg-warning bg-opacity-10 text-warning-emphasis">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Vui lòng kiểm tra lại số dư hoặc thử phương thức khác.
+                </div>
+
+                <div class="d-grid gap-2 col-8 mx-auto mt-4">
+                    <a th:href="@{/cart}" class="btn btn-primary rounded-pill py-2">
+                        <i class="fas fa-shopping-cart me-2"></i>Quay lại giỏ hàng
+                    </a>
+                    <a th:href="@{/}" class="btn btn-outline-secondary rounded-pill py-2">
+                        Về trang chủ
+                    </a>
+                </div>
+            </div>
+
         </div>
     </section>
 </body>

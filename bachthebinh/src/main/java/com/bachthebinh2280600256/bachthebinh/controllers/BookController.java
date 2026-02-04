@@ -1,5 +1,9 @@
 package com.bachthebinh2280600256.bachthebinh.controllers;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -11,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bachthebinh2280600256.bachthebinh.daos.Item;
 import com.bachthebinh2280600256.bachthebinh.entities.Book;
@@ -71,12 +76,26 @@ public class BookController {
 
     @PostMapping("/add")
     public String addBook(@Valid @ModelAttribute("book") Book book,
-            BindingResult bindingResult,
-            Model model) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("categories", categoryService.getAllCategories());
+                          BindingResult result,
+                          @RequestParam("imageFile") MultipartFile imageFile, // Nhận file từ form
+                          Model model) {
+        if (result.hasErrors()) {
             return "book/add";
         }
+
+        // Xử lý lưu ảnh
+        if (!imageFile.isEmpty()) {
+            try {
+                String fileName = imageFile.getOriginalFilename();
+                // Lưu vào thư mục static/images/
+                Path path = Paths.get("src/main/resources/static/images/" + fileName);
+                Files.write(path, imageFile.getBytes());
+                book.setImage(fileName); // Lưu tên file vào DB
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         bookService.addBook(book);
         return "redirect:/books";
     }
@@ -110,17 +129,19 @@ public class BookController {
         return "redirect:/books";
     }
 
-    // --- 5. GIỎ HÀNG ---
     @PostMapping("/add-to-cart")
     public String addToCart(HttpSession session,
             @RequestParam long id,
             @RequestParam String name,
             @RequestParam double price,
-            @RequestParam(defaultValue = "1") int quantity) {
+            @RequestParam(defaultValue = "1") int quantity,
+            @RequestParam(required = false) String image) { // 1. Nhận thêm tham số image (có thể null)
+        
         var cart = cartService.getCart(session);
         
-        // SỬA: Dùng addItems (có 's') để khớp với file Cart.java
-        cart.addItem(new Item(id, name, price, quantity));
+        // 2. Truyền image vào Constructor của Item
+        // Lưu ý: Đảm bảo thứ tự tham số khớp với @AllArgsConstructor trong Item.java
+        cart.addItem(new Item(id, name, price, quantity, image)); 
         
         cartService.updateCart(session, cart);
         return "redirect:/books";
