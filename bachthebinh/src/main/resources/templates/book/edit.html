@@ -8,8 +8,12 @@
     <section>
         <div class="container">
             <h1>Edit Book</h1>
-            <form th:action="@{/books/edit}" th:object="${book}" method="post">
+            
+            <form th:action="@{/books/edit}" th:object="${book}" method="post" enctype="multipart/form-data">
+                
                 <input type="hidden" th:field="*{id}">
+                
+                <input type="hidden" th:field="*{image}">
                 
                 <div class="col-6 mb-3">
                     <label class="form-label" for="title">Title:</label>
@@ -40,10 +44,24 @@
                     <span class="text-danger" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></span>
                 </div>
 
-                <input type="submit" class="btn btn-primary" value="Save">
+                <div class="col-6 mb-4">
+                    <label class="form-label fw-bold">Book Cover (Image):</label><br>
+                    
+                    <div class="mb-2" th:if="${book.image != null and book.image != ''}">
+                        <img th:src="@{'/images/' + ${book.image}}" alt="Current Image" 
+                             class="img-thumbnail" style="max-height: 150px; object-fit: cover;">
+                    </div>
+                    
+                    <input class="form-control" type="file" name="imageFile" accept="image/*">
+                    <small class="text-muted fst-italic">Leave blank if you don't want to change the image.</small>
+                </div>
+
+                <input type="submit" class="btn btn-primary" value="Save Changes">
             </form>
             <br>
-            <a th:href="@{/books}">Back to List</a>
+            <a th:href="@{/books}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i> Back to List
+            </a>
         </div>
     </section>
 </body>
