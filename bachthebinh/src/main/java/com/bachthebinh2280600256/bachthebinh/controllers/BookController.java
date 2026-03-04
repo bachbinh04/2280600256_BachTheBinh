@@ -113,11 +113,33 @@ public class BookController {
     @PostMapping("/edit")
     public String editBook(@Valid @ModelAttribute("book") Book book,
             BindingResult bindingResult,
+            @RequestParam(value = "imageFile", required = false) org.springframework.web.multipart.MultipartFile imageFile, // Thêm tham số nhận file
             Model model) {
+        
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", categoryService.getAllCategories());
             return "book/edit";
         }
+
+        // --- XỬ LÝ ẢNH KHI SỬA ---
+        // Nếu người dùng có chọn upload ảnh mới
+        if (imageFile != null && !imageFile.isEmpty()) {
+            try {
+                String fileName = imageFile.getOriginalFilename();
+                // Đường dẫn lưu file vào thư mục static/images
+                java.nio.file.Path path = java.nio.file.Paths.get("src/main/resources/static/images/" + fileName);
+                java.nio.file.Files.write(path, imageFile.getBytes());
+                
+                // Cập nhật tên ảnh mới vào sách
+                book.setImage(fileName); 
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+            }
+        }
+        // Lưu ý: Nếu người dùng không chọn ảnh mới, imageFile sẽ empty.
+        // Khi đó tên ảnh cũ vẫn được giữ nguyên nhờ thẻ <input type="hidden" th:field="*{image}"> bên file edit.html
+
+        // Cập nhật sách vào Database
         bookService.updateBook(book);
         return "redirect:/books";
     }
