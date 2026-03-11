@@ -89,3 +89,17 @@
                      style="width: 100%; height: 150px; background-color: #f1f1f1; display: flex; align-items: center; justify-content: center;">
                     <i class="fas fa-seedling fa-4x" style="color: #b04e76;"></i>
                 </div>
+                <p th:text="${flower.description}" style="height: 40px; overflow: hidden; margin-top: 10px;">Mô tả hoa...</p>
+                <div class="price">PRICE:<span th:text="${#numbers.formatDecimal(flower.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">$14.00</span></div>                           
+                
+                <div class="buynow"><a href="#">Buy Now</a></div>
+                <a href="#">Details</a>
+            </div>
+             
+            <div th:if="${flowers.isEmpty()}" style="text-align: center; width: 100%; padding: 30px; border: 1px solid #eee; background: #fafafa;">
+                <i class="fas fa-box-open fa-3x" style="color: #ccc; margin-bottom: 10px;"></i>
+                <p style="color: #777;">Hiện tại chưa có sản phẩm hoa nào được bày bán.</p>
+            </div>
+             
+            <div class="cleaner_with_height">&nbsp;</div>
+        </div>
