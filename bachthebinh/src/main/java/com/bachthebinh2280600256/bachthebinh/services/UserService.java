@@ -1,14 +1,7 @@
 package com.bachthebinh2280600256.bachthebinh.services;
 
 import java.util.List;
-
-import com.bachthebinh2280600256.bachthebinh.entities.Role;
-import com.bachthebinh2280600256.bachthebinh.entities.User;
-import com.bachthebinh2280600256.bachthebinh.repositories.IRoleRepository;
-import com.bachthebinh2280600256.bachthebinh.repositories.IUserRepository;
-
-import jakarta.validation.constraints.NotNull;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import com.bachthebinh2280600256.bachthebinh.entities.Role;
+import com.bachthebinh2280600256.bachthebinh.entities.User;
+import com.bachthebinh2280600256.bachthebinh.repositories.IRoleRepository;
+import com.bachthebinh2280600256.bachthebinh.repositories.IUserRepository;
+
+import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -31,9 +30,20 @@ public class UserService implements UserDetailsService {
     @Autowired
     private IRoleRepository roleRepository;
 
-    // 1. Lưu người dùng mới vào Database
+    // 1. Lưu người dùng mới vào Database CÓ GÁN QUYỀN MẶC ĐỊNH
     public void save(@NotNull User user) {
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        
+        // Tìm quyền USER, nếu chưa có thì tự động tạo
+        Role role = roleRepository.findByName("USER");
+        if (role == null) {
+            role = new Role();
+            role.setName("USER");
+            roleRepository.save(role);
+        }
+        
+        // Gán quyền và lưu user
+        user.getRoles().add(role);
         userRepository.save(user);
     }
 
