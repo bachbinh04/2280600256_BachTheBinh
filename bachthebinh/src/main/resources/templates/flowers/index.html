@@ -10,3 +10,32 @@
 <link th:href="@{/css/templatemo_style.css}" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
+<body>
+<div id="templatemo_container">
+    <div id="templatemo_top_panel">
+        <div id="templatemo_language_section" style="width: auto; padding-top: 5px;">
+            <div sec:authorize="!isAuthenticated()">
+                <a th:href="@{/login}" style="color: #ffffff; text-decoration: none; font-weight: bold; margin-right: 10px;">Đăng nhập</a>
+                <span style="color: #ffffff;">|</span>
+                <a th:href="@{/register}" style="color: #ffffff; text-decoration: none; font-weight: bold; margin-left: 10px;">Đăng ký</a>
+            </div>
+            <div sec:authorize="isAuthenticated()" style="color: #ffffff; font-weight: bold;">
+                Xin chào, <span sec:authentication="name" style="color: #ffff00;">User</span> 
+                <span style="margin: 0 10px;">|</span>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" style="background: transparent; border: none; color: #ffcccc; cursor: pointer; font-weight: bold; font-family: Tahoma, sans-serif;">Đăng xuất</button>
+                </form>
+            </div>
+        </div>
+<div id="templatemo_shopping_cart">
+            Shopping Cart <span>(<a th:href="@{/cart}">Xem giỏ hàng</a>)</span>      
+        </div>
+    </div>
+     
+    <div id="templatemo_header">
+        <img th:href="@{/images/templatemo_site_header.jpg}" alt="Flower Shop" />
+    </div>
+     
+    <div id="templatemo_banner">
+        <a href="#"><img th:src="@{/images/templatemo_banner_image.jpg}" alt="Flower Shop Banner" border="0" /></a>     
+    </div>
