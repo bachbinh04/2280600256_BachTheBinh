@@ -48,3 +48,32 @@
             <li><a href="#">Contact Us</a></li>                    
         </ul> 
     </div>
+<div id="templatemo_content">
+        <div id="templatemo_content_left">
+            <h1>Welcome to Our Flower Site</h1>
+            <p>Khám phá bộ sưu tập hoa tươi thắm nhất dành cho những dịp đặc biệt. Chúng tôi mang đến cho bạn không chỉ là những đóa hoa, mà còn là những thông điệp yêu thương được gửi gắm trọn vẹn.</p>
+                        
+            <div class="cleaner_with_height">&nbsp;</div>
+            <div sec:authorize="hasAuthority('ADMIN')" style="background: #fff0f5; padding: 15px; border: 2px dashed #b04e76; margin-bottom: 30px; border-radius: 8px;">
+                <h3 style="color: #b04e76; margin-top: 0; border-bottom: 1px solid #b04e76; padding-bottom: 5px;">
+                    <i class="fas fa-plus-circle"></i> Thêm Sản Phẩm Hoa Mới
+                </h3>
+                <form th:action="@{/flowers/add}" method="post" enctype="multipart/form-data">
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <input type="text" name="title" placeholder="Tên loài hoa..." required style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
+                        <input type="number" name="price" placeholder="Giá tiền (VNĐ)..." required style="width: 150px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <textarea name="description" placeholder="Mô tả ngắn gọn..." rows="2" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;"></textarea>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <label style="font-weight: bold; color: #555;">Ảnh minh họa:</label>
+                            <input type="file" name="imageFile" accept="image/*" style="margin-left: 10px;" />
+                        </div>
+                        <button type="submit" style="background: #b04e76; color: white; border: none; padding: 8px 25px; cursor: pointer; font-weight: bold; border-radius: 4px;">
+                            Lưu Sản Phẩm
+                        </button>
+                    </div>
+                </form>
+            </div>
