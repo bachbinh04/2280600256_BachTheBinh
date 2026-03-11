@@ -27,7 +27,7 @@ public class FlowerController {
     private final FlowerService flowerService;
 
     // Hiển thị trang chủ hoa
-    // Hàm này do nhánh test-conflict viết
+// Hàm này do nhánh dev quản lý nhé
     @GetMapping
     public String listFlowers(Model model) {
         model.addAttribute("flowers", flowerService.getAllFlowers());
