@@ -17,4 +17,8 @@ public class FlowerService {
     public List<Flower> getAllFlowers() {
         return flowerRepository.findAll();
     }
+    // Thêm hàm này vào trong FlowerService
+    public void save(Flower flower) {
+        flowerRepository.save(flower);
+    }
 }
