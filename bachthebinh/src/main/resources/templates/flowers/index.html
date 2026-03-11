@@ -68,26 +68,32 @@
              <div class="cleaner_with_height">&nbsp;</div>
              
              <h2>New Products</h2>
-             <div class="product_box">
-                <h3>Product One</h3>
-                <img th:src="@{/images/templatemo_image_01.jpg}" alt="image" />
-                <p>Aliquam tristique lacus in sapien. Suspendisse potenti.</p>
-                <div class="price">PRICE:<span>$14.00</span></div>                           
-                <div class="buynow"><a href="shoppingcard.html">Buy Now</a></div><a href="#">Details</a>
+             
+             <div class="product_box" th:each="flower : ${flowers}">
+                
+                <h3 th:text="${flower.title}">Tên Hoa</h3>
+                
+                <img th:if="${flower.image != null and flower.image != ''}" 
+                     th:src="@{'/images/' + ${flower.image}}" 
+                     alt="flower image" style="width: 100%; height: 150px; object-fit: cover;" />
+                <i th:if="${flower.image == null or flower.image == ''}" 
+                   class="fas fa-seedling fa-4x" style="color: #4CAF50; display: block; text-align: center; margin: 20px 0;"></i>
+                
+                <p th:text="${flower.description}" style="height: 40px; overflow: hidden;">Mô tả hoa...</p>
+                
+                <div class="price">
+                    PRICE: <span th:text="${#numbers.formatDecimal(flower.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">$14.00</span>
+                </div>                           
+                
+                <div class="buynow">
+                    <a href="#">Buy Now</a>
+                </div>
+                <a href="#">Details</a>
+                
              </div>
-             <div class="product_box">
-                <h3>Product Title</h3>
-                <img th:src="@{/images/templatemo_image_02.jpg}" alt="image" />
-                <p>Lorem ipsum dolor sit amet, consectetuer adipiscing.</p>
-                <div class="price">PRICE:<span>$18.00</span></div>                           
-                <div class="buynow"><a href="shoppingcard.html">Buy Now</a></div><a href="#">Details</a>
-             </div>
-             <div class="product_box">
-                <h3>Product Title</h3>
-                <img th:src="@{/images/templatemo_image_03.jpg}" alt="image" />
-                <p>Suspendisse potenti. Ut sed pede. Nullam vitae tellus. </p>
-                <div class="price">PRICE:<span>$26.00</span></div>                           
-                <div class="buynow"><a href="shoppingcard.html">Buy Now</a></div><a href="#">Details</a>
+             
+             <div th:if="${flowers.isEmpty()}" style="text-align: center; width: 100%; padding: 20px;">
+                <p>Hiện tại chưa có sản phẩm hoa nào.</p>
              </div>
              
             <div class="cleaner_with_height">&nbsp;</div>
