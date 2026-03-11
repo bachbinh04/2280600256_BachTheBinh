@@ -7,11 +7,21 @@
 <body>
     <section>
         <div class="container mt-5 text-center">
-            <h1 class="display-4">Welcome to Hutech Book Store</h1>
-            <p class="lead">Khám phá thế giới tri thức qua từng trang sách.</p>
+            <h1 class="display-4">Welcome to Hutech Store</h1>
+            <p class="lead">Khám phá thế giới tri thức qua từng trang sách và vẻ đẹp của những đóa hoa.</p>
             <hr class="my-4">
-            <p>Bấm vào bên dưới để xem danh sách sách hiện có.</p>
-            <a class="btn btn-primary btn-lg" th:href="@{/books}" role="button">Xem sách ngay</a>
+            <p>Bấm vào bên dưới để khám phá danh sách sản phẩm hiện có.</p>
+            
+            <div class="d-flex justify-content-center gap-3 mt-4">
+                <a class="btn btn-primary btn-lg" th:href="@{/books}" role="button">
+                    <i class="fas fa-book me-2"></i>Xem sách ngay
+                </a>
+                
+                <a class="btn btn-success btn-lg" th:href="@{/flowers}" role="button">
+                    <i class="fas fa-seedling me-2"></i>Xem hoa ngay
+                </a>
+            </div>
+            
         </div>
     </section>
 </body>
